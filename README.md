@@ -18,10 +18,10 @@ import Watch from '../../libs/watch';
 ### 配置初始化检察对象   
 ```javascript
 import Watch from '../../libs/watch';
-let watch;
+let watch; //预先全局定义watch实例名称
 Page({
     data: {
-        a: '1',
+        a: 'hello',
         b: {
             c: {
                 d: 33
@@ -29,8 +29,11 @@ Page({
             e: [1, 2, [3, 4]]
         }
     },
-    watch: {
-        a: function(val, oldVal) {
+    onLoad: function () {
+    	watch = new Watch(this); //必须实例化Watch，否则下面的watch监听时间不起作用
+	},
+    watch: {//以下是通过watch监听事件来监听通过watch.setData方法设置的data变量
+        a: function(val, oldVal) {
             console.log('new: %s, old: %s', val, oldVal);
         },
         'b.c.d': function(val, oldVal) {
@@ -42,6 +45,13 @@ Page({
         'b.e[3][4]': function(val, oldVal) {
             console.log('new: %s, old: %s', val, oldVal);
         },
+    },
+    bindTapChoose: function () {
+    	var newA = this.data.a + ' world!';
+	//这里必须使用watch进行setData设置data变量值，否则不会有响应效果。watch.setData继承原生小程序的this.setData方法，只是增加了响应data变量的功能。
+	watch.setData({
+		a: newA
+	});
     }
 })
 ```
